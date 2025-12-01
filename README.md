@@ -1,71 +1,86 @@
 # 🌀 Fractal Explorer - Android App
 
-Interactive fractal explorer with full touch support, real-time controls, beautiful presets, and ambient soundscape. Built with Capacitor for Android.
+[![Version](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/nabz0r/fractal-explorer/releases)
+[![Android](https://img.shields.io/badge/platform-Android%207%2B-green)](https://developer.android.com)
+[![License](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
+[![PWA](https://img.shields.io/badge/PWA-ready-orange)](https://web.dev/progressive-web-apps/)
 
-![Fractal Explorer](https://img.shields.io/badge/version-1.1.0-blue) ![Android](https://img.shields.io/badge/platform-Android-green) ![License](https://img.shields.io/badge/license-MIT-purple)
+Interactive fractal explorer with full touch support, beautiful presets, auto-explore animations, and ambient soundscape. Built with Capacitor for Android.
 
 ## ✨ Features
 
+### Core
 - 🎨 **6 Fractal Formulas**: Mandelbrot, cubic, quartic, sin, exp, and custom
-- 📱 **Full Touch Support**: Pinch-to-zoom, multi-touch pan, smooth gestures
-- 🎯 **10 Beautiful Presets**: One-tap access to stunning fractal configurations
-- 🎬 **Auto-Explore Mode**: Sit back and watch the app explore fractals automatically
-- 📷 **Screenshot Export**: Save your favorite fractals as high-quality images
-- 🎨 **7 Color Schemes**: Rainbow, Fire, Ocean, Sunset, Neon, Pastel, Monochrome + Custom
-- 🔊 **Ambient Audio**: Chill soundscape that adapts to your exploration
-- ⚡ **Optimized Rendering**: Adaptive quality settings for smooth performance
-- 📺 **Fullscreen Mode**: Immersive viewing experience
+- 📱 **Full Touch Support**: Pinch-to-zoom, drag to pan, double-tap zoom
+- 🎯 **10 Beautiful Presets**: One-tap access to stunning configurations
+- 🎬 **Auto-Explore Mode**: Watch fractals animate automatically
+- 📷 **Screenshot Export**: Save high-quality PNG images
+- 🎨 **8 Color Schemes**: Rainbow, Fire, Ocean, Sunset, Neon, Pastel, Monochrome + Custom
+
+### Audio & Feedback
+- 🔊 **Ambient Audio**: Chill soundscape adapts to zoom level
+- 📳 **Haptic Feedback**: Tactile response on interactions
+
+### Mobile Experience
+- 📺 **Fullscreen Mode**: Immersive viewing
 - 📴 **Offline Support**: Works without internet (PWA)
-- 📳 **Haptic Feedback**: Tactile response on Android
+- 💾 **Save Favorites**: Store your best fractals locally
+- 📤 **Share**: Share images or configs via Web Share API
+- ⚡ **Adaptive Quality**: Smooth performance on any device
+
+### PWA Features
+- 🚀 **App Shortcuts**: Quick access to Random and Auto modes
+- 📲 **Installable**: Add to home screen like a native app
+- 🔗 **URL Sharing**: Share fractal configurations via link
 
 ## 📱 Screenshots
 
-| Main View | Presets | Controls |
+| Main View | Presets | Auto Mode |
 |-----------|---------|----------|
-| Pinch to zoom, drag to pan | 10 curated presets | Collapsible panel |
+| Pinch & zoom | 10 presets | Animated exploration |
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 16+
-- Android SDK (for building APK)
+- Android SDK (for APK)
 - Android Studio (recommended)
 
 ### Installation
 
 ```bash
-# Clone the repo
+# Clone
 git clone https://github.com/nabz0r/fractal-explorer.git
 cd fractal-explorer
 
-# Install dependencies
+# Install
 npm install
 
-# Add Android platform
-npm run cap:add:android
+# Generate icons (optional)
+npm install sharp
+node scripts/generate-icons.js
 
-# Sync web assets
+# Add Android
+npm run cap:add:android
 npm run cap:sync
 ```
 
 ### Development
 
 ```bash
-# Run web version
+# Web version
 npm run serve
 # Open http://localhost:8000
 
-# Open in Android Studio
+# Android Studio
 npm run cap:open:android
 ```
 
 ### Build APK
 
 ```bash
-# Full build
 npm run cap:build
-
-# APK location: android/app/build/outputs/apk/release/
+# Output: android/app/build/outputs/apk/release/
 ```
 
 ## 🎮 Controls
@@ -74,31 +89,40 @@ npm run cap:build
 |---------|--------|
 | **Pinch** | Zoom in/out |
 | **Drag** | Pan view |
-| **Tap header buttons** | Screenshot, Auto, Audio, Fullscreen |
-| **Pull up panel** | Access all controls |
+| **Double-tap** | Zoom in 2x |
+| **Long press** | Context menu |
+| **Scroll** | Zoom (desktop) |
 
 ## 🎨 Presets
 
-1. **Classic** - The iconic Mandelbrot set
-2. **Spiral** - Beautiful spiraling patterns
-3. **Lightning** - Electric blue fractals
-4. **Dendrite** - Tree-like structures
-5. **Siegel** - Named after Carl Siegel
+1. **Classic** - Iconic Mandelbrot
+2. **Spiral** - Spiraling patterns
+3. **Lightning** - Electric fractals
+4. **Dendrite** - Tree structures
+5. **Siegel** - Carl Siegel disk
 6. **Douady** - Complex boundaries
-7. **San Marco** - Cathedral-like patterns
-8. **Cubic** - z³ + c variation
-9. **Sine** - Trigonometric beauty
-10. **Exp** - Exponential fractals
+7. **San Marco** - Cathedral patterns
+8. **Cubic** - z³ + c
+9. **Sine** - Trigonometric
+10. **Exp** - Exponential
 
 ## 📁 Project Structure
 
 ```
 fractal-explorer/
 ├── www/
-│   ├── index.html      # Main app (all-in-one)
-│   ├── manifest.json   # PWA manifest
-│   └── sw.js           # Service worker
-├── android/            # Android native code
+│   ├── index.html        # Main app
+│   ├── manifest.json     # PWA manifest
+│   ├── sw.js             # Service worker
+│   ├── js/
+│   │   ├── gestures.js   # Touch handling
+│   │   ├── storage.js    # Local storage
+│   │   └── share.js      # Share functionality
+│   └── icons/
+│       └── icon.svg      # App icon source
+├── android-config/       # Android native configs
+├── scripts/
+│   └── generate-icons.js # Icon generator
 ├── capacitor.config.json
 ├── package.json
 ├── BUILD_GUIDE.md
@@ -107,53 +131,71 @@ fractal-explorer/
 
 ## ⚙️ Configuration
 
-### App Settings (capacitor.config.json)
-- `appId`: `com.nabz0r.fractalexplorer`
-- `appName`: `Fractal Explorer`
-- Splash screen with immersive mode
-- Status bar styling
+### capacitor.config.json
+- App ID: `com.nabz0r.fractalexplorer`
+- Splash screen: Immersive dark theme
+- Status bar: Dark style
+
+### URL Parameters
+Share fractals via URL:
+```
+?f=mandelbrot&cr=-0.7&ci=0.27&cx=-0.5&cy=0&s=2.5&c=rainbow
+```
 
 ## 🔧 Troubleshooting
 
-### Build issues
+### Build fails
 ```bash
 cd android && ./gradlew clean && cd ..
 npm run cap:sync
 ```
 
-### Touch not working
-- Make sure Chrome 70+ on device
-- Check touch-action CSS
+### Icons not showing
+```bash
+node scripts/generate-icons.js
+npm run cap:sync
+```
 
-### Audio not playing
-- Audio requires user interaction first
-- Check volume settings
+### Touch issues
+- Check `touch-action: none` in CSS
+- Verify Chrome 70+ on device
 
 ## 📝 Changelog
 
+### v1.2.0 (Current)
+- ✅ Double-tap to zoom
+- ✅ Long press context menu
+- ✅ Inertia scrolling
+- ✅ Save/load favorites
+- ✅ Web Share API integration
+- ✅ URL parameter sharing
+- ✅ PWA shortcuts
+- ✅ Android native config files
+
 ### v1.1.0
-- ✅ Full touch support (pinch-to-zoom, pan)
-- ✅ 10 beautiful presets
+- ✅ Full touch support
+- ✅ 10 presets
 - ✅ Screenshot export
-- ✅ Auto-explore animation mode
-- ✅ Fullscreen immersive mode
-- ✅ PWA with offline support
+- ✅ Auto-explore mode
+- ✅ Fullscreen mode
+- ✅ PWA support
 - ✅ Haptic feedback
-- ✅ Collapsible control panel
-- ✅ 2 new color schemes (Neon, Pastel)
 
 ### v1.0.0
 - Initial release
 
-## 🔗 Links
+## 🤝 Contributing
 
-- [Capacitor Docs](https://capacitorjs.com)
-- [Fractals Math](https://en.wikipedia.org/wiki/Mandelbrot_set)
+PRs welcome! Please:
+1. Fork the repo
+2. Create feature branch
+3. Commit changes
+4. Open PR
 
 ## 📄 License
 
-MIT
+MIT © nabz0r
 
 ---
 
-Made with 🌀 by nabz0r
+Made with 🌀 by [nabz0r](https://github.com/nabz0r)
