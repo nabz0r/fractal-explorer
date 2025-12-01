@@ -1,6 +1,6 @@
 {
-  "appId": "com.nabz0r.fractalexplorer",
-  "appName": "Fractal Explorer",
+  "appId": "com.nabz0r.fractalcalm",
+  "appName": "Fractal Calm",
   "webDir": "www",
   "server": {
     "androidScheme": "https"
@@ -24,6 +24,7 @@
     "StatusBar": {
       "style": "Dark",
       "backgroundColor": "#0a0e27"
-    }
+    },
+    "Haptics": {}
   }
 }

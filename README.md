@@ -1,196 +1,169 @@
-# 🌀 Fractal Explorer - Android App
+# 🧘 Fractal Calm - Visual Meditation App
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue)](https://github.com/nabz0r/fractal-explorer/releases)
-[![Android](https://img.shields.io/badge/platform-Android%207%2B-green)](https://developer.android.com)
-[![License](https://img.shields.io/badge/license-MIT-purple)](LICENSE)
-[![PWA](https://img.shields.io/badge/PWA-ready-orange)](https://web.dev/progressive-web-apps/)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/nabz0r/fractal-explorer/releases)
+[![Android](https://img.shields.io/badge/platform-Android-green)](https://play.google.com/store)
+[![Category](https://img.shields.io/badge/category-Health%20%26%20Wellness-purple)]()
 
-Interactive fractal explorer with full touch support, beautiful presets, auto-explore animations, and ambient soundscape. Built with Capacitor for Android.
+**Find inner peace through mesmerizing fractal visuals.**
+
+Guided breathing exercises synchronized with infinite mathematical beauty. Ambient soundscapes adapt to your mood. Track your meditation journey.
+
+## 💰 Business Model
+
+**Freemium:**
+- 3 free sessions
+- Sessions up to 10 min
+- 4 mood themes
+
+**Premium (€4.99 one-time):**
+- Unlimited sessions
+- Sessions up to 30 min
+- 12 mood themes
+- Premium soundscapes
+- Detailed analytics
+- No ads ever
 
 ## ✨ Features
 
-### Core
-- 🎨 **6 Fractal Formulas**: Mandelbrot, cubic, quartic, sin, exp, and custom
-- 📱 **Full Touch Support**: Pinch-to-zoom, drag to pan, double-tap zoom
-- 🎯 **10 Beautiful Presets**: One-tap access to stunning configurations
-- 🎬 **Auto-Explore Mode**: Watch fractals animate automatically
-- 📷 **Screenshot Export**: Save high-quality PNG images
-- 🎨 **8 Color Schemes**: Rainbow, Fire, Ocean, Sunset, Neon, Pastel, Monochrome + Custom
+### Core Experience
+- 🌀 **Infinite Fractals** - Hypnotic visuals that evolve as you meditate
+- 💨 **Guided Breathing** - 4-2-4-2 breathing pattern with visual cues
+- 🎵 **Ambient Audio** - Binaural-inspired soundscapes
+- ⏱️ **Timed Sessions** - 3, 5, 10, 15+ minute options
 
-### Audio & Feedback
-- 🔊 **Ambient Audio**: Chill soundscape adapts to zoom level
-- 📳 **Haptic Feedback**: Tactile response on interactions
+### Mood Themes
+- 🌊 **Calm** - Blue/purple peaceful vibes
+- 🎯 **Focus** - Green energizing patterns
+- 🌙 **Sleep** - Deep dark soothing visuals
+- ⚡ **Energy** - Warm stimulating fractals
 
-### Mobile Experience
-- 📺 **Fullscreen Mode**: Immersive viewing
-- 📴 **Offline Support**: Works without internet (PWA)
-- 💾 **Save Favorites**: Store your best fractals locally
-- 📤 **Share**: Share images or configs via Web Share API
-- ⚡ **Adaptive Quality**: Smooth performance on any device
-
-### PWA Features
-- 🚀 **App Shortcuts**: Quick access to Random and Auto modes
-- 📲 **Installable**: Add to home screen like a native app
-- 🔗 **URL Sharing**: Share fractal configurations via link
+### Tracking
+- 📊 Total sessions & minutes
+- 🔥 Daily streak counter
+- 🫁 Breath count per session
 
 ## 📱 Screenshots
 
-| Main View | Presets | Auto Mode |
-|-----------|---------|----------|
-| Pinch & zoom | 10 presets | Animated exploration |
+| Home | Session | Complete |
+|------|---------|----------|
+| Mood selection | Breathing guide | Stats |
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Node.js 16+
-- Android SDK (for APK)
-- Android Studio (recommended)
-
-### Installation
-
 ```bash
-# Clone
 git clone https://github.com/nabz0r/fractal-explorer.git
 cd fractal-explorer
-
-# Install
 npm install
-
-# Generate icons (optional)
-npm install sharp
-node scripts/generate-icons.js
-
-# Add Android
-npm run cap:add:android
-npm run cap:sync
-```
-
-### Development
-
-```bash
-# Web version
 npm run serve
 # Open http://localhost:8000
-
-# Android Studio
-npm run cap:open:android
 ```
 
 ### Build APK
 
 ```bash
+npm run cap:add:android
+npm run cap:sync
 npm run cap:build
-# Output: android/app/build/outputs/apk/release/
 ```
 
-## 🎮 Controls
+## 💳 Monetization Integration
 
-| Gesture | Action |
-|---------|--------|
-| **Pinch** | Zoom in/out |
-| **Drag** | Pan view |
-| **Double-tap** | Zoom in 2x |
-| **Long press** | Context menu |
-| **Scroll** | Zoom (desktop) |
+### Google Play Billing (TODO)
 
-## 🎨 Presets
+```javascript
+// In capacitor.config.json, add:
+{
+  "plugins": {
+    "Purchases": {
+      "apiKey": "your_revenuecat_api_key"
+    }
+  }
+}
+```
 
-1. **Classic** - Iconic Mandelbrot
-2. **Spiral** - Spiraling patterns
-3. **Lightning** - Electric fractals
-4. **Dendrite** - Tree structures
-5. **Siegel** - Carl Siegel disk
-6. **Douady** - Complex boundaries
-7. **San Marco** - Cathedral patterns
-8. **Cubic** - z³ + c
-9. **Sine** - Trigonometric
-10. **Exp** - Exponential
+Recommended: Use [RevenueCat](https://www.revenuecat.com/) for easier IAP management.
+
+### AdMob (Optional - Free tier)
+
+Can add interstitial ads between free sessions if desired.
 
 ## 📁 Project Structure
 
 ```
-fractal-explorer/
+fractal-calm/
 ├── www/
-│   ├── index.html        # Main app
-│   ├── manifest.json     # PWA manifest
-│   ├── sw.js             # Service worker
-│   ├── js/
-│   │   ├── gestures.js   # Touch handling
-│   │   ├── storage.js    # Local storage
-│   │   └── share.js      # Share functionality
-│   └── icons/
-│       └── icon.svg      # App icon source
-├── android-config/       # Android native configs
-├── scripts/
-│   └── generate-icons.js # Icon generator
+│   ├── index.html      # Main app (all-in-one)
+│   ├── manifest.json   # PWA config
+│   └── sw.js           # Offline support
 ├── capacitor.config.json
 ├── package.json
-├── BUILD_GUIDE.md
-└── README.md
+└── BUILD_GUIDE.md
 ```
 
-## ⚙️ Configuration
+## 🎯 Target Market
 
-### capacitor.config.json
-- App ID: `com.nabz0r.fractalexplorer`
-- Splash screen: Immersive dark theme
-- Status bar: Dark style
+- People seeking stress relief
+- Meditation beginners (visual > audio only)
+- Insomnia sufferers (sleep mode)
+- Focus/productivity seekers
+- Math/art enthusiasts
 
-### URL Parameters
-Share fractals via URL:
-```
-?f=mandelbrot&cr=-0.7&ci=0.27&cx=-0.5&cy=0&s=2.5&c=rainbow
-```
+## 📈 Competitive Advantage
 
-## 🔧 Troubleshooting
-
-### Build fails
-```bash
-cd android && ./gradlew clean && cd ..
-npm run cap:sync
-```
-
-### Icons not showing
-```bash
-node scripts/generate-icons.js
-npm run cap:sync
-```
-
-### Touch issues
-- Check `touch-action: none` in CSS
-- Verify Chrome 70+ on device
+| App | Price | Visual | Unique |
+|-----|-------|--------|--------|
+| Calm | €70/yr | Static images | Celebrity voices |
+| Headspace | €60/yr | Animations | Courses |
+| **Fractal Calm** | **€4.99** | **Infinite generative** | **Math + meditation** |
 
 ## 📝 Changelog
 
-### v1.2.0 (Current)
-- ✅ Double-tap to zoom
-- ✅ Long press context menu
-- ✅ Inertia scrolling
-- ✅ Save/load favorites
-- ✅ Web Share API integration
-- ✅ URL parameter sharing
-- ✅ PWA shortcuts
-- ✅ Android native config files
+### v2.0.0 - Fractal Calm
+- 🧘 Complete pivot to meditation app
+- 💰 Freemium model (3 free sessions)
+- 🎨 4 mood themes with unique fractals
+- 💨 Guided breathing (4-2-4-2 pattern)
+- 📊 Session tracking & streaks
+- 🎵 Ambient audio
+- ✨ Premium modal & purchase flow
+- 📱 Beautiful intro screen
 
-### v1.1.0
-- ✅ Full touch support
-- ✅ 10 presets
-- ✅ Screenshot export
-- ✅ Auto-explore mode
-- ✅ Fullscreen mode
-- ✅ PWA support
-- ✅ Haptic feedback
+### v1.x - Fractal Explorer
+- Original fractal explorer app
 
-### v1.0.0
-- Initial release
+## 📝 Play Store Listing (Draft)
 
-## 🤝 Contributing
+**Title:** Fractal Calm - Visual Meditation
 
-PRs welcome! Please:
-1. Fork the repo
-2. Create feature branch
-3. Commit changes
-4. Open PR
+**Short description:**
+Find peace in infinite mathematical beauty. Breathe, relax, sleep.
+
+**Full description:**
+Fractal Calm combines ancient breathing techniques with mesmerizing fractal visuals for a unique meditation experience.
+
+✨ INFINITE VISUALS
+Watch as mathematical patterns evolve endlessly, guiding your mind to stillness.
+
+💨 GUIDED BREATHING  
+Follow the visual breathing guide - inhale as the circle expands, exhale as it contracts.
+
+🌙 MOOD THEMES
+• Calm - Peaceful blues for relaxation
+• Focus - Energizing greens for productivity  
+• Sleep - Deep darks for bedtime
+• Energy - Warm oranges for motivation
+
+📊 TRACK PROGRESS
+See your meditation minutes, session count, and daily streak grow.
+
+Perfect for:
+• Meditation beginners
+• Stress & anxiety relief
+• Better sleep
+• Focus & productivity
+• Quick mental breaks
+
+Start your journey to calm today.
 
 ## 📄 License
 
@@ -198,4 +171,4 @@ MIT © nabz0r
 
 ---
 
-Made with 🌀 by [nabz0r](https://github.com/nabz0r)
+Made with 🧘 for inner peace

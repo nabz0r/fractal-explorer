@@ -1,11 +1,10 @@
 {
-  "name": "fractal-explorer",
-  "version": "1.2.0",
-  "description": "Interactive Fractal Explorer - Android App with touch controls, presets, favorites, share, and ambient audio",
+  "name": "fractal-calm",
+  "version": "2.0.0",
+  "description": "Visual meditation app with infinite fractal visuals, guided breathing, and ambient audio",
   "main": "index.js",
   "scripts": {
     "serve": "npx http-server www -p 8000 -c-1",
-    "build": "echo 'Building web assets'",
     "icons": "node scripts/generate-icons.js",
     "cap:add:android": "npx cap add android",
     "cap:sync": "npx cap sync",
@@ -14,15 +13,15 @@
     "cap:run:android": "npx cap run android"
   },
   "keywords": [
+    "meditation",
+    "mindfulness",
+    "relaxation",
     "fractal",
-    "mandelbrot",
-    "julia",
-    "explorer",
-    "android",
-    "touch",
-    "interactive",
-    "pwa",
-    "capacitor"
+    "breathing",
+    "sleep",
+    "calm",
+    "wellness",
+    "mental-health"
   ],
   "author": "nabz0r",
   "license": "MIT",
@@ -36,7 +35,6 @@
     "@capacitor/core": "^7.4.4",
     "@capacitor/splash-screen": "^7.0.0",
     "@capacitor/status-bar": "^7.0.0",
-    "@capacitor/share": "^7.0.0",
     "@capacitor/haptics": "^7.0.0"
   },
   "devDependencies": {
