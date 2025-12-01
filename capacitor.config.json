@@ -1,0 +1,13 @@
+{
+  "appId": "com.nabz0r.fractalexplorer",
+  "appName": "Fractal Explorer",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "GoogleMobileAds": {
+      "androidAppId": "ca-app-pub-xxxxxxxxxxxxxxxx~yyyyyyyyyy"
+    }
+  }
+}
