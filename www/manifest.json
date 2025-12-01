@@ -1,13 +1,23 @@
 {
   "name": "Fractal Explorer",
   "short_name": "Fractals",
-  "description": "Interactive fractal explorer with touch controls, animations, and ambient audio",
-  "start_url": "/index.html",
+  "description": "Interactive fractal explorer with touch controls, beautiful presets, auto-explore animations, and ambient audio. Create stunning mathematical art!",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#0a0e27",
   "theme_color": "#0a0e27",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["entertainment", "graphics", "utilities", "education"],
   "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
     {
       "src": "icons/icon-72.png",
       "sizes": "72x72",
@@ -51,12 +61,31 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["entertainment", "graphics", "utilities"],
-  "screenshots": [
+  "shortcuts": [
     {
-      "src": "screenshots/screenshot1.png",
-      "sizes": "1080x1920",
-      "type": "image/png"
+      "name": "Random Fractal",
+      "short_name": "Random",
+      "description": "Generate a random fractal",
+      "url": "./index.html?action=random",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Auto Explore",
+      "short_name": "Auto",
+      "description": "Start auto-exploration mode",
+      "url": "./index.html?action=auto",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
     }
-  ]
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "related_applications": [],
+  "prefer_related_applications": false
 }
