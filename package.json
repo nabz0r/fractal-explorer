@@ -1,31 +1,45 @@
 {
   "name": "fractal-explorer",
-  "version": "1.1.0",
-  "description": "Interactive Fractal Explorer - Android App with touch controls, presets, and ambient audio",
+  "version": "1.2.0",
+  "description": "Interactive Fractal Explorer - Android App with touch controls, presets, favorites, share, and ambient audio",
   "main": "index.js",
   "scripts": {
     "serve": "npx http-server www -p 8000 -c-1",
     "build": "echo 'Building web assets'",
+    "icons": "node scripts/generate-icons.js",
     "cap:add:android": "npx cap add android",
     "cap:sync": "npx cap sync",
     "cap:build": "npx cap sync && cd android && ./gradlew assembleRelease",
-    "cap:open:android": "npx cap open android"
+    "cap:open:android": "npx cap open android",
+    "cap:run:android": "npx cap run android"
   },
   "keywords": [
     "fractal",
     "mandelbrot",
+    "julia",
     "explorer",
     "android",
     "touch",
-    "interactive"
+    "interactive",
+    "pwa",
+    "capacitor"
   ],
   "author": "nabz0r",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nabz0r/fractal-explorer.git"
+  },
   "dependencies": {
     "@capacitor/android": "^7.4.4",
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4",
     "@capacitor/splash-screen": "^7.0.0",
-    "@capacitor/status-bar": "^7.0.0"
+    "@capacitor/status-bar": "^7.0.0",
+    "@capacitor/share": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.0"
   }
 }
