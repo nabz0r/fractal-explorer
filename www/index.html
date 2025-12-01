@@ -1,189 +1,138 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fractal Explorer - Interactive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="screen-orientation" content="any">
+    <link rel="manifest" href="manifest.json">
+    <title>Fractal Explorer</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: none;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0e27;
         }
         
         body {
-            background: linear-gradient(135deg, #0a0e27 0%, #16213e 100%);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #fff;
-            padding: 15px;
-            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
         
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
+        .app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 2em;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 100;
+            flex-shrink: 0;
         }
         
-        .main {
-            display: grid;
-            grid-template-columns: 1fr 320px;
-            gap: 15px;
-            align-items: start;
+        .header.hidden {
+            display: none;
         }
         
-        .canvas-container {
-            background: rgba(0,0,0,0.4);
-            border: 2px solid #4a7c9e;
-            border-radius: 8px;
-            padding: 15px;
-            aspect-ratio: 1;
+        .logo {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(74, 124, 158, 0.3);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .icon-btn:active {
+            transform: scale(0.9);
+            background: rgba(74, 158, 255, 0.5);
+        }
+        
+        .icon-btn.active {
+            background: rgba(0, 208, 132, 0.5);
+        }
+        
+        /* Canvas */
+        .canvas-wrapper {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
         }
         
         canvas {
             width: 100%;
             height: 100%;
             display: block;
-            border-radius: 4px;
-            background: #0a1a2a;
-            cursor: grab;
+            background: #0a0e27;
         }
         
-        canvas:active {
-            cursor: grabbing;
-        }
-        
-        .controls {
-            background: rgba(0,0,0,0.4);
-            border: 2px solid #4a7c9e;
-            border-radius: 8px;
-            padding: 15px;
-            height: fit-content;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        
-        .control-group {
-            margin-bottom: 20px;
-        }
-        
-        .control-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-weight: 600;
-            font-size: 0.85em;
-            color: #a8d5ff;
-        }
-        
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        
-        input[type="text"], input[type="number"], select {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid #4a7c9e;
-            color: #ffd700;
-            padding: 6px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.85em;
-        }
-        
-        input[type="range"] {
-            width: 100%;
-            cursor: pointer;
-            accent-color: #4a9eff;
-            height: 5px;
-        }
-        
-        .slider-with-value {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .slider-with-value input[type="range"] {
-            flex: 1;
-            margin: 0;
-        }
-        
-        .value-display {
-            min-width: 50px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 0.8em;
-            color: #ffd700;
-            font-weight: bold;
-        }
-        
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        
-        button {
+        /* Stats overlay */
+        .stats-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
             padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 0.85em;
-            transition: all 0.3s ease;
-            color: white;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: monospace;
+            pointer-events: none;
+            opacity: 0.8;
         }
         
-        .reset-btn {
-            background: linear-gradient(135deg, #00d084 0%, #00a86b 100%);
-            grid-column: 1 / -1;
+        .stats-overlay.hidden {
+            display: none;
         }
         
-        .reset-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 208, 132, 0.4);
-        }
-        
-        .audio-toggle {
-            background: #ff9500;
-        }
-        
-        .audio-toggle:hover {
-            background: #ffb143;
-        }
-        
-        .audio-toggle.active {
-            background: #00d084;
-        }
-        
-        .stats {
-            background: rgba(0,0,0,0.2);
-            padding: 12px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            margin-bottom: 15px;
-        }
-        
-        .stat-row {
+        .stat-line {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-            padding: 3px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .stat-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
+            gap: 8px;
+            margin-bottom: 2px;
         }
         
         .stat-label {
@@ -191,61 +140,401 @@
         }
         
         .stat-value {
-            font-family: monospace;
-            font-weight: bold;
             color: #ffd700;
+            font-weight: bold;
         }
         
-        .color-picker-row {
+        /* Controls Panel */
+        .controls-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(74, 124, 158, 0.3);
+            transform: translateY(calc(100% - 60px));
+            transition: transform 0.3s ease;
+            z-index: 200;
+            max-height: 70vh;
+        }
+        
+        .controls-panel.expanded {
+            transform: translateY(0);
+        }
+        
+        .controls-panel.hidden {
+            display: none;
+        }
+        
+        .panel-handle {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            gap: 20px;
+        }
+        
+        .handle-bar {
+            width: 40px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+        }
+        
+        .quick-actions {
             display: flex;
             gap: 8px;
-            margin-bottom: 10px;
         }
         
-        input[type="color"] {
-            width: 100%;
-            height: 30px;
-            border: 1px solid #4a7c9e;
-            border-radius: 4px;
+        .quick-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(74, 124, 158, 0.3);
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .quick-btn.active {
+            background: rgba(0, 208, 132, 0.5);
+        }
+        
+        .panel-content {
+            padding: 0 16px 20px;
+            overflow-y: auto;
+            max-height: calc(70vh - 60px);
+        }
+        
+        .control-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #a8d5ff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Presets Grid */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .preset-btn {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, #1a2a4a 0%, #0a1a2a 100%);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        
+        .preset-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .preset-btn.active {
+            border-color: #4a9eff;
+        }
+        
+        .preset-btn span {
+            position: absolute;
+            bottom: 2px;
+            left: 0;
+            right: 0;
+            font-size: 9px;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* Sliders */
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .slider-label {
+            font-size: 12px;
+            color: #ccc;
+            min-width: 80px;
+        }
+        
+        .slider-input {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: rgba(74, 124, 158, 0.3);
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4a9eff;
             cursor: pointer;
         }
         
-        .hint {
-            font-size: 0.75em;
-            color: #7a9cb8;
-            margin-top: 3px;
-            font-style: italic;
+        .slider-value {
+            font-family: monospace;
+            font-size: 12px;
+            color: #ffd700;
+            min-width: 50px;
+            text-align: right;
         }
         
-        .divider {
-            height: 1px;
-            background: rgba(74, 124, 158, 0.3);
-            margin: 15px 0;
+        /* Input fields */
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
         }
         
-        select {
+        .input-group {
+            flex: 1;
+        }
+        
+        .input-label {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 4px;
+        }
+        
+        .input-field {
             width: 100%;
+            padding: 8px;
+            border: 1px solid rgba(74, 124, 158, 0.3);
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+            color: #ffd700;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        /* Select */
+        .select-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(74, 124, 158, 0.3);
+            border-radius: 6px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        
+        /* Color row */
+        .color-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        
+        .color-picker {
+            flex: 1;
+            height: 40px;
+            border: 1px solid rgba(74, 124, 158, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        /* Fullscreen overlay */
+        .fullscreen-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            padding: 20px 30px;
+            border-radius: 12px;
+            text-align: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .fullscreen-hint.visible {
+            opacity: 1;
+        }
+        
+        /* Auto-explore indicator */
+        .auto-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 100, 100, 0.8);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .auto-indicator.active {
+            display: flex;
+        }
+        
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        /* Loading */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0e27;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(74, 158, 255, 0.2);
+            border-top-color: #4a9eff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            color: #a8d5ff;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .toast.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🌀 Fractal Explorer</h1>
+    <div class="app">
+        <!-- Header -->
+        <div class="header" id="header">
+            <div class="logo">
+                🌀 Fractal Explorer
+            </div>
+            <div class="header-buttons">
+                <button class="icon-btn" id="screenshotBtn" title="Screenshot">📷</button>
+                <button class="icon-btn" id="autoBtn" title="Auto Explore">🎬</button>
+                <button class="icon-btn" id="audioBtn" title="Audio">🔇</button>
+                <button class="icon-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+            </div>
+        </div>
         
-        <div class="main">
-            <div class="canvas-container">
-                <canvas id="canvas"></canvas>
+        <!-- Canvas -->
+        <div class="canvas-wrapper">
+            <canvas id="canvas"></canvas>
+            
+            <!-- Stats overlay -->
+            <div class="stats-overlay" id="statsOverlay">
+                <div class="stat-line">
+                    <span class="stat-label">Zoom:</span>
+                    <span class="stat-value" id="statZoom">1.0x</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">Center:</span>
+                    <span class="stat-value" id="statCenter">0, 0</span>
+                </div>
+                <div class="stat-line">
+                    <span class="stat-label">FPS:</span>
+                    <span class="stat-value" id="statFps">60</span>
+                </div>
             </div>
             
-            <div class="controls">
-                <div class="button-group">
-                    <button class="reset-btn" id="resetBtn">↻ Reset View</button>
-                    <button class="audio-toggle" id="audioBtn">🔊 Audio OFF</button>
+            <!-- Auto-explore indicator -->
+            <div class="auto-indicator" id="autoIndicator">
+                <div class="pulse-dot"></div>
+                <span>AUTO</span>
+            </div>
+        </div>
+        
+        <!-- Controls Panel -->
+        <div class="controls-panel" id="controlsPanel">
+            <div class="panel-handle" id="panelHandle">
+                <div class="quick-actions">
+                    <button class="quick-btn" id="resetBtn">Reset</button>
+                    <button class="quick-btn" id="randomBtn">Random</button>
+                </div>
+                <div class="handle-bar"></div>
+            </div>
+            
+            <div class="panel-content">
+                <!-- Presets -->
+                <div class="control-section">
+                    <div class="section-title">Presets</div>
+                    <div class="presets-grid" id="presetsGrid"></div>
                 </div>
                 
-                <div class="control-group">
-                    <label for="formulaSelect">Formula</label>
-                    <select id="formulaSelect">
+                <!-- Formula -->
+                <div class="control-section">
+                    <div class="section-title">Formula</div>
+                    <select class="select-field" id="formulaSelect">
                         <option value="mandelbrot">z² + c (Mandelbrot)</option>
                         <option value="cubic">z³ + c</option>
                         <option value="quartic">z⁴ + c</option>
@@ -253,187 +542,232 @@
                         <option value="exp">e^z + c</option>
                         <option value="custom">Custom (z^p + c)</option>
                     </select>
+                    
+                    <div id="powerControl" style="display: none;">
+                        <div class="slider-row">
+                            <span class="slider-label">Power</span>
+                            <input type="range" class="slider-input" id="power" min="2" max="5" step="0.1" value="2">
+                            <span class="slider-value" id="powerValue">2.0</span>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="control-group">
-                    <label>C Value (Real + Imaginary)</label>
+                <!-- C Value -->
+                <div class="control-section">
+                    <div class="section-title">C Value (Complex)</div>
                     <div class="input-row">
-                        <div>
-                            <input type="text" id="cReal" value="-0.7" placeholder="Real">
-                            <div class="hint">Real</div>
+                        <div class="input-group">
+                            <div class="input-label">Real</div>
+                            <input type="number" class="input-field" id="cReal" value="-0.7" step="0.01">
                         </div>
-                        <div>
-                            <input type="text" id="cImag" value="0.27015" placeholder="Imag">
-                            <div class="hint">Imaginary</div>
+                        <div class="input-group">
+                            <div class="input-label">Imaginary</div>
+                            <input type="number" class="input-field" id="cImag" value="0.27015" step="0.01">
                         </div>
                     </div>
                 </div>
                 
-                <div class="control-group" id="powerControl" style="display: none;">
-                    <label for="power">Custom Power (p)</label>
-                    <div class="slider-with-value">
-                        <input type="range" id="power" min="2" max="5" step="0.1" value="2">
-                        <span class="value-display" id="powerValue">2.0</span>
+                <!-- Rendering -->
+                <div class="control-section">
+                    <div class="section-title">Rendering</div>
+                    <div class="slider-row">
+                        <span class="slider-label">Iterations</span>
+                        <input type="range" class="slider-input" id="iterations" min="20" max="500" step="10" value="100">
+                        <span class="slider-value" id="iterationsValue">100</span>
+                    </div>
+                    <div class="slider-row">
+                        <span class="slider-label">Quality</span>
+                        <input type="range" class="slider-input" id="quality" min="1" max="4" step="0.5" value="2">
+                        <span class="slider-value" id="qualityValue">Medium</span>
                     </div>
                 </div>
                 
-                <div class="control-group">
-                    <label for="zoom">Zoom Level</label>
-                    <div class="slider-with-value">
-                        <input type="range" id="zoom" min="0" max="8" step="0.1" value="0">
-                        <span class="value-display" id="zoomValue">1.0x</span>
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <label for="quality">Render Quality</label>
-                    <div class="slider-with-value">
-                        <input type="range" id="quality" min="1" max="4" step="0.5" value="2">
-                        <span class="value-display" id="qualityValue">Medium</span>
-                    </div>
-                </div>
-                    <div class="slider-with-value">
-                        <input type="range" id="iterations" min="10" max="300" step="10" value="50">
-                        <span class="value-display" id="iterationsValue">50</span>
-                    </div>
-                </div>
-                
-                <div class="divider"></div>
-                
-                <div class="control-group">
-                    <label>Color Scheme</label>
-                    <select id="colorScheme">
+                <!-- Colors -->
+                <div class="control-section">
+                    <div class="section-title">Colors</div>
+                    <select class="select-field" id="colorScheme">
                         <option value="rainbow">Rainbow</option>
                         <option value="fire">Fire</option>
                         <option value="ocean">Ocean</option>
                         <option value="sunset">Sunset</option>
+                        <option value="neon">Neon</option>
+                        <option value="pastel">Pastel</option>
                         <option value="monochrome">Monochrome</option>
                         <option value="custom">Custom</option>
                     </select>
-                </div>
-                
-                <div class="control-group" id="customColorControl" style="display: none;">
-                    <label>Custom Colors</label>
-                    <div class="color-picker-row">
-                        <input type="color" id="color1" value="#000000" title="Min iterations">
-                    </div>
-                    <div class="color-picker-row">
-                        <input type="color" id="color2" value="#ff00ff" title="Mid iterations">
-                    </div>
-                    <div class="color-picker-row">
-                        <input type="color" id="color3" value="#00ffff" title="Max iterations">
+                    
+                    <div id="customColorControl" style="display: none;">
+                        <div class="color-row">
+                            <input type="color" class="color-picker" id="color1" value="#000000">
+                            <input type="color" class="color-picker" id="color2" value="#ff00ff">
+                            <input type="color" class="color-picker" id="color3" value="#00ffff">
+                        </div>
                     </div>
                 </div>
                 
-                <div class="divider"></div>
-                
-                <div class="control-group">
-                    <label for="audioFreq">Ambient Base Freq</label>
-                    <div class="slider-with-value">
-                        <input type="range" id="audioFreq" min="50" max="800" step="10" value="440">
-                        <span class="value-display" id="audioFreqValue">440 Hz</span>
+                <!-- Audio -->
+                <div class="control-section">
+                    <div class="section-title">Audio</div>
+                    <div class="slider-row">
+                        <span class="slider-label">Frequency</span>
+                        <input type="range" class="slider-input" id="audioFreq" min="50" max="800" step="10" value="440">
+                        <span class="slider-value" id="audioFreqValue">440 Hz</span>
                     </div>
-                </div>
-                
-                <div class="control-group">
-                    <label for="audioVolume">Audio Volume</label>
-                    <div class="slider-with-value">
-                        <input type="range" id="audioVolume" min="0" max="1" step="0.1" value="0.5">
-                        <span class="value-display" id="audioVolumeValue">50%</span>
+                    <div class="slider-row">
+                        <span class="slider-label">Volume</span>
+                        <input type="range" class="slider-input" id="audioVolume" min="0" max="1" step="0.1" value="0.3">
+                        <span class="slider-value" id="audioVolumeValue">30%</span>
                     </div>
-                </div>
-                
-                <div class="stats">
-                    <div class="stat-row">
-                        <span class="stat-label">Mouse X</span>
-                        <span class="stat-value" id="mouseX">0.00</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">Mouse Y</span>
-                        <span class="stat-value" id="mouseY">0.00</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">FPS</span>
-                        <span class="stat-value" id="fpsValue">60</span>
-                    </div>
-                </div>
-                
-                <div style="font-size: 0.75em; color: #7a9cb8; line-height: 1.4;">
-                    <strong>Controls:</strong><br>
-                    • Scroll: Zoom in/out<br>
-                    • Drag: Pan view<br>
-                    • Adjust C, formula & colors live
                 </div>
             </div>
         </div>
+        
+        <!-- Loading overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading Fractal Explorer...</div>
+        </div>
+        
+        <!-- Toast -->
+        <div class="toast" id="toast"></div>
     </div>
-    
+
     <script>
-        // Canvas setup
+        // ============ APP STATE ============
+        const state = {
+            // View
+            centerX: -0.5,
+            centerY: 0,
+            scale: 2.5,
+            
+            // Fractal
+            formula: 'mandelbrot',
+            cReal: -0.7,
+            cImag: 0.27015,
+            maxIterations: 100,
+            customPower: 2,
+            
+            // Rendering
+            quality: 2,
+            colorScheme: 'rainbow',
+            customColors: ['#000000', '#ff00ff', '#00ffff'],
+            
+            // Audio
+            audioEnabled: false,
+            audioFreq: 440,
+            audioVolume: 0.3,
+            
+            // UI state
+            autoExplore: false,
+            isFullscreen: false,
+            panelExpanded: false,
+            
+            // Touch
+            touches: [],
+            lastPinchDist: 0,
+            isDragging: false,
+            dragStart: { x: 0, y: 0 },
+            viewStart: { x: 0, y: 0 }
+        };
+        
+        // ============ PRESETS ============
+        const presets = [
+            { name: 'Classic', formula: 'mandelbrot', cReal: -0.7, cImag: 0.27015, color: 'rainbow' },
+            { name: 'Spiral', formula: 'mandelbrot', cReal: -0.8, cImag: 0.156, color: 'ocean' },
+            { name: 'Lightning', formula: 'mandelbrot', cReal: -0.4, cImag: 0.6, color: 'neon' },
+            { name: 'Dendrite', formula: 'mandelbrot', cReal: 0, cImag: 1, color: 'fire' },
+            { name: 'Siegel', formula: 'mandelbrot', cReal: -0.391, cImag: -0.587, color: 'sunset' },
+            { name: 'Douady', formula: 'mandelbrot', cReal: -0.123, cImag: 0.745, color: 'pastel' },
+            { name: 'San Marco', formula: 'mandelbrot', cReal: -0.75, cImag: 0, color: 'monochrome' },
+            { name: 'Cubic', formula: 'cubic', cReal: -0.5, cImag: 0.5, color: 'rainbow' },
+            { name: 'Sine', formula: 'sin', cReal: 1, cImag: 0.1, color: 'ocean' },
+            { name: 'Exp', formula: 'exp', cReal: -0.65, cImag: 0, color: 'fire' }
+        ];
+        
+        // ============ DOM ELEMENTS ============
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         
-        // State
-        let centerX = -0.5;
-        let centerY = 0;
-        let scale = 2.5;
-        let maxIterations = 50;
-        let cReal = -0.7;
-        let cImag = 0.27015;
-        let formula = 'mandelbrot';
-        let colorScheme = 'rainbow';
-        let customPower = 2;
-        
-        // Audio - Ambient soundscape
+        // ============ AUDIO ============
         let audioContext = null;
-        let audioEnabled = false;
-        let audioFreq = 440;
-        let audioVolume = 0.5;
-        let ambientOscillators = [];
-        let noiseNode = null;
+        let oscillators = [];
         let masterGain = null;
         let filterNode = null;
-        let lastAudioUpdate = 0;
         
-        // Mouse
-        let isDragging = false;
-        let dragStartX = 0;
-        let dragStartY = 0;
-        let dragStartCenterX = 0;
-        let dragStartCenterY = 0;
-        
-        // FPS
-        let frameCount = 0;
-        let lastFpsTime = performance.now();
-        
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width;
-            canvas.height = rect.height;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Complex number operations
-        function cmul(a, b) {
-            return {
-                real: a.real * b.real - a.imag * b.imag,
-                imag: a.real * b.imag + a.imag * b.real
-            };
-        }
-        
-        function cadd(a, b) {
-            return {
-                real: a.real + b.real,
-                imag: a.imag + b.imag
-            };
+        function initAudio() {
+            if (audioContext) return;
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            masterGain = audioContext.createGain();
+            masterGain.gain.value = 0.02 * state.audioVolume;
+            
+            filterNode = audioContext.createBiquadFilter();
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 500;
+            filterNode.Q.value = 2;
+            
+            const freqs = [state.audioFreq * 0.5, state.audioFreq * 0.75, state.audioFreq, state.audioFreq * 1.5];
+            freqs.forEach(freq => {
+                const osc = audioContext.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = freq;
+                
+                const gain = audioContext.createGain();
+                gain.gain.value = 0.15 / freqs.length;
+                
+                osc.connect(gain);
+                gain.connect(filterNode);
+                osc.start();
+                oscillators.push(osc);
+            });
+            
+            filterNode.connect(masterGain);
+            masterGain.connect(audioContext.destination);
         }
         
-        function cabs(a) {
-            return Math.sqrt(a.real * a.real + a.imag * a.imag);
+        function updateAudio() {
+            if (!state.audioEnabled || !audioContext) return;
+            
+            const zoomRatio = Math.log2(2.5 / state.scale);
+            const filterFreq = 200 + zoomRatio * 300;
+            filterNode.frequency.exponentialRampToValueAtTime(
+                Math.max(20, Math.min(filterFreq, 10000)),
+                audioContext.currentTime + 0.5
+            );
+            
+            masterGain.gain.setValueAtTime(0.03 * state.audioVolume, audioContext.currentTime);
+            
+            if (oscillators.length > 0) {
+                oscillators[0].frequency.exponentialRampToValueAtTime(
+                    state.audioFreq,
+                    audioContext.currentTime + 0.5
+                );
+            }
         }
         
-        function cpow(a, p) {
+        function stopAudio() {
+            oscillators.forEach(osc => osc.stop());
+            oscillators = [];
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+        }
+        
+        // ============ COMPLEX MATH ============
+        const cmul = (a, b) => ({
+            real: a.real * b.real - a.imag * b.imag,
+            imag: a.real * b.imag + a.imag * b.real
+        });
+        
+        const cadd = (a, b) => ({
+            real: a.real + b.real,
+            imag: a.imag + b.imag
+        });
+        
+        const cabs = a => Math.sqrt(a.real * a.real + a.imag * a.imag);
+        
+        const cpow = (a, p) => {
             const r = cabs(a);
             const theta = Math.atan2(a.imag, a.real);
             const rp = Math.pow(r, p);
@@ -441,33 +775,30 @@
                 real: rp * Math.cos(p * theta),
                 imag: rp * Math.sin(p * theta)
             };
-        }
+        };
         
-        function csin(a) {
-            return {
-                real: Math.sin(a.real) * Math.cosh(a.imag),
-                imag: Math.cos(a.real) * Math.sinh(a.imag)
-            };
-        }
+        const csin = a => ({
+            real: Math.sin(a.real) * Math.cosh(a.imag),
+            imag: Math.cos(a.real) * Math.sinh(a.imag)
+        });
         
-        function cexp(a) {
+        const cexp = a => {
             const e = Math.exp(a.real);
             return {
                 real: e * Math.cos(a.imag),
                 imag: e * Math.sin(a.imag)
             };
-        }
+        };
         
-        // Iteration function
+        // ============ FRACTAL ITERATION ============
         function iterate(x, y) {
             let z = { real: x, imag: y };
-            const c = { real: cReal, imag: cImag };
+            const c = { real: state.cReal, imag: state.cImag };
             
-            for (let i = 0; i < maxIterations; i++) {
-                const abs = cabs(z);
-                if (abs > 2) return i;
+            for (let i = 0; i < state.maxIterations; i++) {
+                if (cabs(z) > 2) return i;
                 
-                switch(formula) {
+                switch (state.formula) {
                     case 'mandelbrot':
                         z = cadd(cmul(z, z), c);
                         break;
@@ -485,58 +816,67 @@
                         z = cadd(cexp(z), c);
                         break;
                     case 'custom':
-                        z = cadd(cpow(z, customPower), c);
+                        z = cadd(cpow(z, state.customPower), c);
                         break;
                 }
             }
-            return maxIterations;
+            return state.maxIterations;
         }
         
-        // Coloring
-        function getColor(iterations) {
-            const ratio = iterations / maxIterations;
+        // ============ COLORING ============
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 0, g: 0, b: 0 };
+        }
+        
+        function getColor(iter) {
+            if (iter >= state.maxIterations) return [0, 0, 0];
+            
+            const ratio = iter / state.maxIterations;
             let r, g, b;
             
-            switch(colorScheme) {
+            switch (state.colorScheme) {
                 case 'rainbow':
                     r = Math.sin(ratio * Math.PI) * 255;
                     g = Math.sin((ratio + 0.33) * Math.PI) * 255;
                     b = Math.sin((ratio + 0.66) * Math.PI) * 255;
                     break;
-                    
                 case 'fire':
-                    if (ratio < 0.5) {
-                        r = ratio * 2 * 255;
-                        g = 0;
-                        b = 0;
-                    } else {
-                        r = 255;
-                        g = (ratio - 0.5) * 2 * 255;
-                        b = 0;
-                    }
+                    r = Math.min(255, ratio * 3 * 255);
+                    g = Math.max(0, (ratio - 0.33) * 3 * 255);
+                    b = Math.max(0, (ratio - 0.66) * 3 * 255);
                     break;
-                    
                 case 'ocean':
                     r = Math.sin(ratio * Math.PI) * 50;
                     g = 100 + Math.sin(ratio * Math.PI + 1) * 150;
                     b = 200 + Math.cos(ratio * Math.PI) * 55;
                     break;
-                    
                 case 'sunset':
                     r = 255;
-                    g = 150 + Math.sin(ratio * Math.PI) * 105;
-                    b = Math.cos(ratio * Math.PI) * 255;
+                    g = 100 + Math.sin(ratio * Math.PI) * 155;
+                    b = Math.sin(ratio * Math.PI * 2) * 200;
                     break;
-                    
+                case 'neon':
+                    r = Math.sin(ratio * Math.PI * 2) * 127 + 128;
+                    g = Math.sin(ratio * Math.PI * 2 + 2) * 127 + 128;
+                    b = Math.sin(ratio * Math.PI * 2 + 4) * 127 + 128;
+                    break;
+                case 'pastel':
+                    r = 180 + Math.sin(ratio * Math.PI) * 75;
+                    g = 180 + Math.sin(ratio * Math.PI + 2) * 75;
+                    b = 180 + Math.sin(ratio * Math.PI + 4) * 75;
+                    break;
                 case 'monochrome':
                     r = g = b = ratio * 255;
                     break;
-                    
                 case 'custom':
-                    const c1 = hexToRgb(document.getElementById('color1').value);
-                    const c2 = hexToRgb(document.getElementById('color2').value);
-                    const c3 = hexToRgb(document.getElementById('color3').value);
-                    
+                    const c1 = hexToRgb(state.customColors[0]);
+                    const c2 = hexToRgb(state.customColors[1]);
+                    const c3 = hexToRgb(state.customColors[2]);
                     if (ratio < 0.5) {
                         const t = ratio * 2;
                         r = c1.r + (c2.r - c1.r) * t;
@@ -551,26 +891,17 @@
                     break;
             }
             
-            return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+            return [Math.round(r), Math.round(g), Math.round(b)];
         }
         
-        function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : { r: 0, g: 0, b: 0 };
-        }
+        // ============ RENDERING ============
+        let renderTimeout = null;
         
-        // Render with adaptive resolution
-        let renderQuality = 2; // Lower res = faster
         function render() {
-            const w = Math.max(100, Math.floor(canvas.width / renderQuality));
-            const h = Math.max(100, Math.floor(canvas.height / renderQuality));
-            const pixelSize = scale / w;
+            const w = Math.max(100, Math.floor(canvas.width / state.quality));
+            const h = Math.max(100, Math.floor(canvas.height / state.quality));
+            const pixelSize = state.scale / Math.min(w, h);
             
-            // Use offscreen canvas for better perf
             const offCanvas = document.createElement('canvas');
             offCanvas.width = w;
             offCanvas.height = h;
@@ -578,231 +909,458 @@
             const imageData = offCtx.createImageData(w, h);
             const data = imageData.data;
             
+            const aspectRatio = canvas.width / canvas.height;
+            const scaleX = state.scale * (aspectRatio > 1 ? aspectRatio : 1);
+            const scaleY = state.scale * (aspectRatio < 1 ? 1 / aspectRatio : 1);
+            
             for (let py = 0; py < h; py++) {
                 for (let px = 0; px < w; px++) {
-                    const x = centerX - scale/2 + px * pixelSize;
-                    const y = centerY - scale/2 + py * pixelSize;
-                    const iterations = iterate(x, y);
-                    
-                    const color = getColor(iterations);
-                    const rgb = color.match(/\d+/g);
+                    const x = state.centerX + (px / w - 0.5) * scaleX;
+                    const y = state.centerY + (py / h - 0.5) * scaleY;
+                    const iter = iterate(x, y);
+                    const [r, g, b] = getColor(iter);
                     
                     const idx = (py * w + px) * 4;
-                    data[idx] = parseInt(rgb[0]);
-                    data[idx+1] = parseInt(rgb[1]);
-                    data[idx+2] = parseInt(rgb[2]);
-                    data[idx+3] = 255;
+                    data[idx] = r;
+                    data[idx + 1] = g;
+                    data[idx + 2] = b;
+                    data[idx + 3] = 255;
                 }
             }
             
             offCtx.putImageData(imageData, 0, 0);
             ctx.imageSmoothingEnabled = false;
             ctx.drawImage(offCanvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height);
+            
+            updateStats();
             updateAudio();
         }
         
-        // Audio - Ambient soundscape (chill)
-        function initAudio() {
-            if (audioContext) return;
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            masterGain = audioContext.createGain();
-            masterGain.gain.setValueAtTime(0.02 * audioVolume, audioContext.currentTime);
+        function scheduleRender() {
+            if (renderTimeout) clearTimeout(renderTimeout);
+            renderTimeout = setTimeout(render, 16);
+        }
+        
+        // ============ CANVAS RESIZE ============
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            render();
+        }
+        
+        // ============ TOUCH HANDLING ============
+        function getTouchDistance(t1, t2) {
+            const dx = t1.clientX - t2.clientX;
+            const dy = t1.clientY - t2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+        
+        function getTouchCenter(t1, t2) {
+            return {
+                x: (t1.clientX + t2.clientX) / 2,
+                y: (t1.clientY + t2.clientY) / 2
+            };
+        }
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            state.touches = Array.from(e.touches);
             
-            // Low-pass filter for smoothness
-            filterNode = audioContext.createBiquadFilter();
-            filterNode.type = 'lowpass';
-            filterNode.frequency.setValueAtTime(500, audioContext.currentTime);
-            filterNode.Q.setValueAtTime(2, audioContext.currentTime);
+            if (state.touches.length === 1) {
+                state.isDragging = true;
+                state.dragStart = { x: state.touches[0].clientX, y: state.touches[0].clientY };
+                state.viewStart = { x: state.centerX, y: state.centerY };
+            } else if (state.touches.length === 2) {
+                state.lastPinchDist = getTouchDistance(state.touches[0], state.touches[1]);
+            }
             
-            // Create ambient pad with multiple sine waves
-            const frequencies = [audioFreq * 0.5, audioFreq * 0.75, audioFreq, audioFreq * 1.5];
-            for (let freq of frequencies) {
-                const osc = audioContext.createOscillator();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+            hapticFeedback('light');
+        }, { passive: false });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touches = Array.from(e.touches);
+            
+            if (touches.length === 1 && state.isDragging) {
+                const dx = (touches[0].clientX - state.dragStart.x) / canvas.width * state.scale * (canvas.width / canvas.height);
+                const dy = (touches[0].clientY - state.dragStart.y) / canvas.height * state.scale;
+                state.centerX = state.viewStart.x - dx;
+                state.centerY = state.viewStart.y - dy;
+                scheduleRender();
+            } else if (touches.length === 2) {
+                const newDist = getTouchDistance(touches[0], touches[1]);
+                const zoomFactor = state.lastPinchDist / newDist;
                 
-                const gain = audioContext.createGain();
-                gain.gain.setValueAtTime(0.15 / frequencies.length, audioContext.currentTime);
+                const center = getTouchCenter(touches[0], touches[1]);
+                const rect = canvas.getBoundingClientRect();
+                const px = (center.x - rect.left) / rect.width;
+                const py = (center.y - rect.top) / rect.height;
                 
-                osc.connect(gain);
-                gain.connect(filterNode);
-                osc.start();
-                ambientOscillators.push(osc);
+                // Zoom towards pinch center
+                const aspectRatio = canvas.width / canvas.height;
+                const oldScaleX = state.scale * aspectRatio;
+                const oldScaleY = state.scale;
+                
+                state.scale *= zoomFactor;
+                state.scale = Math.max(0.0001, Math.min(10, state.scale));
+                
+                state.lastPinchDist = newDist;
+                scheduleRender();
             }
             
-            filterNode.connect(masterGain);
-            masterGain.connect(audioContext.destination);
-        }
+            state.touches = touches;
+        }, { passive: false });
         
-        function updateAudio() {
-            if (!audioEnabled || !audioContext || performance.now() - lastAudioUpdate < 100) return;
-            lastAudioUpdate = performance.now();
-            
-            // Analyze center area for sound design
-            const centerIterations = iterate(centerX, centerY);
-            const iterRatio = Math.min(centerIterations / maxIterations, 1);
-            const zoomRatio = Math.log2(2.5 / scale); // zoom level 0-8
-            
-            // Filter frequency responds to zoom - smoother transitions
-            const filterFreq = 200 + zoomRatio * 300; // 200-2600 Hz
-            filterNode.frequency.exponentialRampToValueAtTime(filterFreq, audioContext.currentTime + 0.8);
-            
-            // Ambient volume based on iterations and user setting
-            const volume = (0.02 + iterRatio * 0.04) * audioVolume;
-            masterGain.gain.setValueAtTime(volume, audioContext.currentTime);
-            
-            // Modulate base frequency subtly
-            const baseFreq = audioFreq * (0.8 + iterRatio * 0.4);
-            if (ambientOscillators.length > 0) {
-                ambientOscillators[0].frequency.exponentialRampToValueAtTime(baseFreq, audioContext.currentTime + 0.8);
-            }
-        }
+        canvas.addEventListener('touchend', (e) => {
+            state.isDragging = false;
+            state.touches = Array.from(e.touches);
+        });
         
-        function stopAudio() {
-            if (ambientOscillators.length > 0) {
-                ambientOscillators.forEach(osc => osc.stop());
-                ambientOscillators = [];
-            }
-        }
-        
-        // Events
+        // ============ MOUSE HANDLING ============
         canvas.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            dragStartX = e.clientX;
-            dragStartY = e.clientY;
-            dragStartCenterX = centerX;
-            dragStartCenterY = centerY;
+            state.isDragging = true;
+            state.dragStart = { x: e.clientX, y: e.clientY };
+            state.viewStart = { x: state.centerX, y: state.centerY };
         });
         
         canvas.addEventListener('mousemove', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const px = (e.clientX - rect.left) / canvas.width;
-            const py = (e.clientY - rect.top) / canvas.height;
-            
-            document.getElementById('mouseX').textContent = (centerX - scale/2 + px * scale).toFixed(4);
-            document.getElementById('mouseY').textContent = (centerY - scale/2 + py * scale).toFixed(4);
-            
-            if (isDragging) {
-                const deltaX = (e.clientX - dragStartX) / canvas.width * scale;
-                const deltaY = (e.clientY - dragStartY) / canvas.height * scale;
-                centerX = dragStartCenterX - deltaX;
-                centerY = dragStartCenterY - deltaY;
-                render();
+            if (state.isDragging) {
+                const dx = (e.clientX - state.dragStart.x) / canvas.width * state.scale * (canvas.width / canvas.height);
+                const dy = (e.clientY - state.dragStart.y) / canvas.height * state.scale;
+                state.centerX = state.viewStart.x - dx;
+                state.centerY = state.viewStart.y - dy;
+                scheduleRender();
             }
         });
         
         canvas.addEventListener('mouseup', () => {
-            isDragging = false;
+            state.isDragging = false;
         });
         
         canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
             const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
-            scale *= zoomFactor;
-            document.getElementById('zoom').value = Math.log2(2.5 / scale);
-            render();
-        });
+            state.scale *= zoomFactor;
+            state.scale = Math.max(0.0001, Math.min(10, state.scale));
+            scheduleRender();
+        }, { passive: false });
         
-        // Controls
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            centerX = -0.5;
-            centerY = 0;
-            scale = 2.5;
-            document.getElementById('zoom').value = 0;
-            render();
-        });
+        // ============ HAPTIC FEEDBACK ============
+        function hapticFeedback(type = 'light') {
+            if ('vibrate' in navigator) {
+                const durations = {
+                    light: 10,
+                    medium: 20,
+                    heavy: 30
+                };
+                navigator.vibrate(durations[type] || 10);
+            }
+        }
         
-        document.getElementById('audioBtn').addEventListener('click', (e) => {
-            audioEnabled = !audioEnabled;
-            e.target.textContent = audioEnabled ? '🔊 Audio ON' : '🔊 Audio OFF';
-            e.target.classList.toggle('active');
-            if (audioEnabled) {
-                initAudio();
+        // ============ SCREENSHOT ============
+        function takeScreenshot() {
+            hapticFeedback('medium');
+            
+            // Render at high quality for screenshot
+            const oldQuality = state.quality;
+            state.quality = 1;
+            render();
+            
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `fractal-${Date.now()}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                state.quality = oldQuality;
+                render();
+                showToast('Screenshot saved!');
+            }, 'image/png');
+        }
+        
+        // ============ AUTO EXPLORE ============
+        let autoExploreInterval = null;
+        
+        function startAutoExplore() {
+            state.autoExplore = true;
+            document.getElementById('autoIndicator').classList.add('active');
+            document.getElementById('autoBtn').classList.add('active');
+            
+            let time = 0;
+            autoExploreInterval = setInterval(() => {
+                time += 0.02;
+                
+                // Slowly animate C values
+                state.cReal = -0.7 + Math.sin(time * 0.5) * 0.3;
+                state.cImag = 0.27 + Math.cos(time * 0.3) * 0.2;
+                
+                // Slowly zoom in
+                if (state.scale > 0.01) {
+                    state.scale *= 0.998;
+                } else {
+                    state.scale = 2.5;
+                    state.centerX = -0.5 + Math.random() * 0.5;
+                    state.centerY = Math.random() * 0.5 - 0.25;
+                }
+                
+                updateControls();
+                render();
+            }, 50);
+        }
+        
+        function stopAutoExplore() {
+            state.autoExplore = false;
+            document.getElementById('autoIndicator').classList.remove('active');
+            document.getElementById('autoBtn').classList.remove('active');
+            
+            if (autoExploreInterval) {
+                clearInterval(autoExploreInterval);
+                autoExploreInterval = null;
+            }
+        }
+        
+        // ============ FULLSCREEN ============
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+                state.isFullscreen = true;
+                document.getElementById('header').classList.add('hidden');
+                document.getElementById('controlsPanel').classList.add('hidden');
+                document.getElementById('fullscreenBtn').textContent = '⛶';
             } else {
-                stopAudio();
+                document.exitFullscreen();
+                state.isFullscreen = false;
+                document.getElementById('header').classList.remove('hidden');
+                document.getElementById('controlsPanel').classList.remove('hidden');
+            }
+            
+            setTimeout(resizeCanvas, 100);
+            hapticFeedback('medium');
+        }
+        
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                state.isFullscreen = false;
+                document.getElementById('header').classList.remove('hidden');
+                document.getElementById('controlsPanel').classList.remove('hidden');
             }
         });
         
-        document.getElementById('formulaSelect').addEventListener('change', (e) => {
-            formula = e.target.value;
-            document.getElementById('powerControl').style.display = 
-                formula === 'custom' ? 'block' : 'none';
+        // ============ UI UPDATES ============
+        function updateStats() {
+            document.getElementById('statZoom').textContent = (2.5 / state.scale).toFixed(1) + 'x';
+            document.getElementById('statCenter').textContent = 
+                state.centerX.toFixed(3) + ', ' + state.centerY.toFixed(3);
+        }
+        
+        function updateControls() {
+            document.getElementById('cReal').value = state.cReal.toFixed(4);
+            document.getElementById('cImag').value = state.cImag.toFixed(4);
+            document.getElementById('formulaSelect').value = state.formula;
+            document.getElementById('colorScheme').value = state.colorScheme;
+            document.getElementById('iterations').value = state.maxIterations;
+            document.getElementById('iterationsValue').textContent = state.maxIterations;
+            document.getElementById('quality').value = state.quality;
+        }
+        
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), 2000);
+        }
+        
+        // ============ PRESETS ============
+        function loadPreset(preset) {
+            state.formula = preset.formula;
+            state.cReal = preset.cReal;
+            state.cImag = preset.cImag;
+            state.colorScheme = preset.color;
+            state.centerX = -0.5;
+            state.centerY = 0;
+            state.scale = 2.5;
+            
+            updateControls();
             render();
-        });
+            hapticFeedback('light');
+            showToast(`Loaded: ${preset.name}`);
+        }
         
-        document.getElementById('colorScheme').addEventListener('change', (e) => {
-            colorScheme = e.target.value;
-            document.getElementById('customColorControl').style.display = 
-                colorScheme === 'custom' ? 'block' : 'none';
+        function initPresets() {
+            const grid = document.getElementById('presetsGrid');
+            presets.forEach((preset, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'preset-btn';
+                btn.innerHTML = `<span>${preset.name}</span>`;
+                btn.onclick = () => loadPreset(preset);
+                
+                // Generate preview color
+                const hue = (i / presets.length) * 360;
+                btn.style.background = `linear-gradient(135deg, hsl(${hue}, 50%, 30%), hsl(${hue + 60}, 50%, 20%))`;
+                
+                grid.appendChild(btn);
+            });
+        }
+        
+        // ============ RANDOM ============
+        function randomFractal() {
+            state.cReal = (Math.random() - 0.5) * 2;
+            state.cImag = (Math.random() - 0.5) * 2;
+            state.formula = ['mandelbrot', 'cubic', 'sin', 'exp'][Math.floor(Math.random() * 4)];
+            state.colorScheme = ['rainbow', 'fire', 'ocean', 'sunset', 'neon', 'pastel'][Math.floor(Math.random() * 6)];
+            state.centerX = -0.5;
+            state.centerY = 0;
+            state.scale = 2.5;
+            
+            updateControls();
             render();
-        });
+            hapticFeedback('medium');
+            showToast('Random fractal!');
+        }
         
-        document.getElementById('cReal').addEventListener('input', (e) => {
-            cReal = parseFloat(e.target.value) || 0;
-            render();
-        });
+        // ============ EVENT LISTENERS ============
+        function initEventListeners() {
+            // Header buttons
+            document.getElementById('screenshotBtn').onclick = takeScreenshot;
+            document.getElementById('autoBtn').onclick = () => {
+                if (state.autoExplore) stopAutoExplore();
+                else startAutoExplore();
+            };
+            document.getElementById('audioBtn').onclick = () => {
+                state.audioEnabled = !state.audioEnabled;
+                document.getElementById('audioBtn').textContent = state.audioEnabled ? '🔊' : '🔇';
+                document.getElementById('audioBtn').classList.toggle('active', state.audioEnabled);
+                if (state.audioEnabled) initAudio();
+                else stopAudio();
+                hapticFeedback('light');
+            };
+            document.getElementById('fullscreenBtn').onclick = toggleFullscreen;
+            
+            // Panel toggle
+            document.getElementById('panelHandle').onclick = () => {
+                state.panelExpanded = !state.panelExpanded;
+                document.getElementById('controlsPanel').classList.toggle('expanded', state.panelExpanded);
+            };
+            
+            // Quick actions
+            document.getElementById('resetBtn').onclick = () => {
+                state.centerX = -0.5;
+                state.centerY = 0;
+                state.scale = 2.5;
+                render();
+                hapticFeedback('light');
+            };
+            document.getElementById('randomBtn').onclick = randomFractal;
+            
+            // Formula
+            document.getElementById('formulaSelect').onchange = (e) => {
+                state.formula = e.target.value;
+                document.getElementById('powerControl').style.display = 
+                    state.formula === 'custom' ? 'block' : 'none';
+                render();
+            };
+            
+            // Power
+            document.getElementById('power').oninput = (e) => {
+                state.customPower = parseFloat(e.target.value);
+                document.getElementById('powerValue').textContent = state.customPower.toFixed(1);
+                render();
+            };
+            
+            // C values
+            document.getElementById('cReal').onchange = (e) => {
+                state.cReal = parseFloat(e.target.value) || 0;
+                render();
+            };
+            document.getElementById('cImag').onchange = (e) => {
+                state.cImag = parseFloat(e.target.value) || 0;
+                render();
+            };
+            
+            // Iterations
+            document.getElementById('iterations').oninput = (e) => {
+                state.maxIterations = parseInt(e.target.value);
+                document.getElementById('iterationsValue').textContent = state.maxIterations;
+                render();
+            };
+            
+            // Quality
+            document.getElementById('quality').oninput = (e) => {
+                state.quality = parseFloat(e.target.value);
+                const labels = { 1: 'Ultra', 1.5: 'High', 2: 'Medium', 2.5: 'Low', 3: 'V.Low', 3.5: 'Potato', 4: 'Fast' };
+                document.getElementById('qualityValue').textContent = labels[state.quality] || 'Custom';
+                render();
+            };
+            
+            // Color scheme
+            document.getElementById('colorScheme').onchange = (e) => {
+                state.colorScheme = e.target.value;
+                document.getElementById('customColorControl').style.display = 
+                    state.colorScheme === 'custom' ? 'block' : 'none';
+                render();
+            };
+            
+            // Custom colors
+            ['color1', 'color2', 'color3'].forEach((id, i) => {
+                document.getElementById(id).oninput = (e) => {
+                    state.customColors[i] = e.target.value;
+                    render();
+                };
+            });
+            
+            // Audio controls
+            document.getElementById('audioFreq').oninput = (e) => {
+                state.audioFreq = parseInt(e.target.value);
+                document.getElementById('audioFreqValue').textContent = state.audioFreq + ' Hz';
+            };
+            document.getElementById('audioVolume').oninput = (e) => {
+                state.audioVolume = parseFloat(e.target.value);
+                document.getElementById('audioVolumeValue').textContent = Math.round(state.audioVolume * 100) + '%';
+                if (masterGain) masterGain.gain.setValueAtTime(0.05 * state.audioVolume, audioContext.currentTime);
+            };
+            
+            // Window events
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 100));
+        }
         
-        document.getElementById('cImag').addEventListener('input', (e) => {
-            cImag = parseFloat(e.target.value) || 0;
-            render();
-        });
+        // ============ FPS COUNTER ============
+        let frameCount = 0;
+        let lastFpsTime = performance.now();
         
-        document.getElementById('power').addEventListener('input', (e) => {
-            customPower = parseFloat(e.target.value);
-            document.getElementById('powerValue').textContent = customPower.toFixed(1);
-            render();
-        });
-        
-        document.getElementById('zoom').addEventListener('input', (e) => {
-            scale = 2.5 / Math.pow(2, parseFloat(e.target.value));
-            document.getElementById('zoomValue').textContent = (2.5 / scale).toFixed(2) + 'x';
-            render();
-        });
-        
-        document.getElementById('iterations').addEventListener('input', (e) => {
-            maxIterations = parseInt(e.target.value);
-            document.getElementById('iterationsValue').textContent = maxIterations;
-            render();
-        });
-        
-        document.getElementById('audioFreq').addEventListener('input', (e) => {
-            audioFreq = parseInt(e.target.value);
-            document.getElementById('audioFreqValue').textContent = audioFreq + ' Hz';
-        });
-        
-        document.getElementById('audioVolume').addEventListener('input', (e) => {
-            audioVolume = parseFloat(e.target.value);
-            document.getElementById('audioVolumeValue').textContent = Math.round(audioVolume * 100) + '%';
-            if (masterGain) {
-                masterGain.gain.setValueAtTime(audioVolume * 0.06, audioContext.currentTime);
-            }
-        });
-        
-        document.getElementById('quality').addEventListener('input', (e) => {
-            renderQuality = parseFloat(e.target.value);
-            const qualityLabels = { 1: 'Ultra', 1.5: 'High', 2: 'Medium', 2.5: 'Low', 3: 'Very Low', 3.5: 'Potato', 4: 'Ultrafast' };
-            document.getElementById('qualityValue').textContent = qualityLabels[renderQuality] || 'Custom';
-            render();
-        });
-        
-        ['color1', 'color2', 'color3'].forEach(id => {
-            document.getElementById(id).addEventListener('input', render);
-        });
-        
-        // Animation loop
-        function animate() {
+        function updateFps() {
             frameCount++;
             const now = performance.now();
             if (now - lastFpsTime >= 1000) {
-                document.getElementById('fpsValue').textContent = frameCount;
+                document.getElementById('statFps').textContent = frameCount;
                 frameCount = 0;
                 lastFpsTime = now;
             }
-            requestAnimationFrame(animate);
+            requestAnimationFrame(updateFps);
         }
         
-        render();
-        animate();
+        // ============ INIT ============
+        function init() {
+            resizeCanvas();
+            initPresets();
+            initEventListeners();
+            updateFps();
+            
+            // Hide loading
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 500);
+            
+            // Register service worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js').catch(() => {});
+            }
+        }
+        
+        init();
     </script>
 </body>
 </html>
